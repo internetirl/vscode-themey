@@ -18,7 +18,7 @@
     "bugs": {
         "url": "https://github.com/internetirl/vscode-themey/bugs"
     },
-    "icon": "logo.png",
+    "icon": "icon.png",
     "galleryBanner": {
         "color": "#1e1e1e",
         "theme": "dark"
