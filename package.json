@@ -7,28 +7,42 @@
     "engines": {
         "vscode": "^1.26.0"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/internetirl/vscode-themey.git"
+    },
+    "bugs": {
+        "url": "https://github.com/internetirl/vscode-themey/bugs"
+    },
     "icon": "logo.png",
+    "galleryBanner": {
+        "color": "#1e1e1e",
+        "theme": "dark"
+    },
     "categories": [
         "Themes"
+    ],
+    "keywords": [
+        "theme",
+        "customization",
+        "tool",
+        "generator",
+        "custom"
     ],
     "activationEvents": [
         "onCommand:extension.runThemey"
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [
-            {
-                "command": "extension.runThemey",
-                "title": "Themey: Create Theme From Image"
-            }
-        ],
-        "themes": [
-            {
-                "label": "Themey",
-                "uiTheme": "vs-dark",
-                "path": "./themes/themey.json"
-            }       
-        ]
+        "commands": [{
+            "command": "extension.runThemey",
+            "title": "Themey: Create Theme From Image"
+        }],
+        "themes": [{
+            "label": "Themey",
+            "uiTheme": "vs-dark",
+            "path": "./themes/themey.json"
+        }]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
