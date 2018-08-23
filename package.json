@@ -4,6 +4,10 @@
     "description": "Create Themes From Images",
     "version": "0.0.1",
     "publisher": "mattferri",
+    "author": {
+        "name": "Matt Ferri",
+        "email": "mattferri@gmail.com"
+    },
     "engines": {
         "vscode": "^1.26.0"
     },
