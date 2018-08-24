@@ -18,7 +18,7 @@ export function generateThemesFromImage(image: string, location: string, cb?: Ca
     let lightMuted: string;
     let darkMuted: string;
 
-    const defaultColor: string = '#000000';
+    const defaultColor: string = '#d0d0d0';
 
     Vibrant.from(image).getPalette((err: any, palette: any) => {
         if (err && cb) {
