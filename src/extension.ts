@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
             let location = path.join(__dirname, '..', 'themes', 'themey.json');
             themeGenerator.generateThemesFromImage(imageUrl.trim(), location, (err: any, message: any) => {
               if(err) {
-                 vscode.window.showInformationMessage("Error getting palette from image: " + err); 
+                 vscode.window.showInformationMessage("Error getting palette from image. Make sure the path is correct."); 
               } else {
                  promptToReloadWindow();
               }
