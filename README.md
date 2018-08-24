@@ -6,6 +6,7 @@ Themey takes an image and converts it into a theme for Visual Studio Code.
 ## Features
 
 Creating a theme is as easy as this:
+
 ![Create](images/Demo.gif)
 ![Reload](images/ThemeyReload.PNG)
 
