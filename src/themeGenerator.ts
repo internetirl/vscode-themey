@@ -31,11 +31,10 @@ export function generateThemesFromImage(image: string, location: string, cb?: Ca
         muted        = palette.Muted        ? palette.Muted.getHex()        : defaultColor;
         lightMuted   = palette.LightMuted   ? palette.LightMuted.getHex()   : defaultColor;
         darkMuted    = palette.DarkMuted    ? palette.DarkMuted.getHex()    : defaultColor;
-        darkMuted = "#1e1e1e";
 
         let colorSet: IColorSet = {
             base: {
-                background: darkMuted || defaultColor,
+                background: '#1e1e1e',//darkMuted || defaultColor,
                 foreground: lightMuted || defaultColor,
                 color1: muted || defaultColor,
                 color2: vibrant || defaultColor,
@@ -46,6 +45,15 @@ export function generateThemesFromImage(image: string, location: string, cb?: Ca
 
         let themeName = 'Themey';
         generateTheme(themeName, colorSet, path.join(__dirname, '..', 'themes', 'themey.json'));
+
+        themeName + ' Alt';
+        colorSet.base.background = darkMuted;
+        colorSet.base.foreground = lightMuted;
+        colorSet.base.color1 = muted;
+        colorSet.base.color2 = vibrant;
+        colorSet.base.color3 = muted;
+        colorSet.base.color4 = vibrant;
+        generateTheme(themeName, colorSet, path.join(__dirname, '..', 'themes', 'themey-alt.json'));
         
         if(cb) {
             cb(undefined, "Successfully created themes.");

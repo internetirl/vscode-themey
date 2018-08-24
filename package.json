@@ -42,11 +42,19 @@
             "command": "extension.runThemey",
             "title": "Themey: Create Theme From Image"
         }],
-        "themes": [{
-            "label": "Themey",
-            "uiTheme": "vs-dark",
-            "path": "./themes/themey.json"
-        }]
+        "themes": 
+        [
+            {
+             "label": "Themey",
+             "uiTheme": "vs-dark",
+             "path": "./themes/themey.json"
+            },
+            {
+             "label": "Themey Alt",
+             "uiTheme": "vs-dark",
+             "path": "./themes/themey-alt.json"
+            }
+    ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
