@@ -10,7 +10,7 @@ Creating a theme is as easy as this:
 * Open the Command Palette (ctrl/cmd+shift+p)
 * Select "Themey: Create Theme From Image"
 * Specify location of image
-* Click 'Reload on the prompt'
+* Click 'Reload' on the prompt
 
 ![Create](images/Demo.gif)
 ![Reload](images/ThemeyReload.PNG)
