@@ -38,23 +38,24 @@
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.runThemey",
-            "title": "Themey: Create Theme From Image"
-        }],
-        "themes": 
-        [
+        "commands": [
             {
-             "label": "Themey",
-             "uiTheme": "vs-dark",
-             "path": "./themes/themey.json"
+                "command": "extension.runThemey",
+                "title": "Themey: Create Theme From Image"
+            }
+        ],
+        "themes": [
+            {
+                "label": "Themey",
+                "uiTheme": "vs-dark",
+                "path": "./themes/themey.json"
             },
             {
-             "label": "Themey Alt",
-             "uiTheme": "vs-dark",
-             "path": "./themes/themey-alt.json"
+                "label": "Themey Alt",
+                "uiTheme": "vs-dark",
+                "path": "./themes/themey-alt.json"
             }
-    ]
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -63,12 +64,14 @@
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
+    "dependencies": {
+        "node-vibrant": "^3.0.0",
+        "vscode-theme-generator": "*"
+    },
     "devDependencies": {
         "typescript": "^2.6.1",
         "vscode": "^1.1.21",
         "tslint": "^5.8.0",
-        "node-vibrant": "^3.0.0",
-        "vscode-theme-generator": "*",
         "@types/node": "^8.10.25",
         "@types/mocha": "^2.2.42"
     }
