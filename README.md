@@ -8,14 +8,12 @@ Themey takes an image and converts it into a theme for Visual Studio Code.
 Creating a theme is as easy as this:
 
 * Open the Command Palette (ctrl/cmd+shift+p)
+* Select "Themey: Create Theme From Image"
+* Specify location of image
+* Click 'Reload on the prompt'
 
 ![Create](images/Demo.gif)
-
-* Click 'Reload' on the prompt
-
 ![Reload](images/ThemeyReload.PNG)
-
-* Open Command Palette Again -> Select "Preferences: Color Theme" -> Select "Themey" or "Themey Alt"
 
 ## Examples
 
