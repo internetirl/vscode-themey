@@ -54,6 +54,11 @@
                 "label": "Themey Alt",
                 "uiTheme": "vs-dark",
                 "path": "./themes/themey-alt.json"
+            },
+            {
+                "label": "Themey 16 Colors",
+                "uiTheme": "vs-dark",
+                "path": "./themes/themey-16colors.json"
             }
         ]
     },
@@ -65,7 +70,9 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
+        "mustache": "^2.3.2",
         "node-vibrant": "^3.0.0",
+        "strip-json-comments": "^2.0.1",
         "vscode-theme-generator": "*"
     },
     "devDependencies": {
