@@ -53,17 +53,20 @@ function onColorPaletteChange(item) {
         verticalColorPalette += `<li><p ${liIconStyle}>${colorPicker}${customIcon}</p><strong>&nbsp;${currentColorHexCode}</strong> - ${templateStrings[color]}</li>`; 
     });
     verticalColorPalette += '</ul>';
-
+    
+                        //  currentState["imageUrl"] = ${imageUrl};
+                        //  currentState["colorPaletteOfImage"] = ${colorPaletteOfImage};
+                        //  currentState["generatedColorPalette"] = ${generatedColorPalette};
                         // const vscode = acquireVsCodeApi();
     return `<!DOCTYPE html>
             <html>
                <head></head>
-               <body >
+               <body>
                 <h1 id="cringe" align="center">Themey</h1>
                 <div align="center">
                  <img style="width:${width}%" src="${imageUrl}"/>
                  <p style="width:${width}%">${horizontalColorPalette}</p>
-                 <button onclick="onColorPaletteChange();">click</button>
+                 <button onclick="onClickReloadUI();">Reload UI</button>
                  ${verticalColorPalette}
                 </div>
                 <script>
@@ -75,6 +78,12 @@ function onColorPaletteChange(item) {
                             id: item.id
                         });
                         document.getElementById("cringe").innerHTML = "Themey Update";
+                    }
+                    function onClickReloadUI() {
+                        const vscode = acquireVsCodeApi();
+                        vscode.postMessage({
+                            command: 'reloadUI'
+                        });
                     }
                 </script>
                </body>

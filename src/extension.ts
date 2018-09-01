@@ -37,17 +37,21 @@ export function activate(context: vscode.ExtensionContext) {
         if (err) {
           vscode.window.showInformationMessage("Error getting palette from image. Make sure the path is correct.");
         } else {
-          const panel = vscode.window.createWebviewPanel('Themey', 'Themey', vscode.ViewColumn.One, {enableScripts:true});
+
+          const panel = vscode.window.createWebviewPanel('Themey', 'Themey', vscode.ViewColumn.One, {enableScripts:true, retainContextWhenHidden: true});
           let htmlSummary = themeSummary.getThemeSummary(imageUrl.trim(), colorPalette, message);
           panel.webview.html = htmlSummary;
           panel.webview.onDidReceiveMessage(message => {
             switch(message.command) {
               case 'updateTemplate':
-                vscode.window.showErrorMessage(message.text + ' ' + message.id);
+                vscode.window.showInformationMessage(message.text + ' ' + message.id);
                 let templateUpdate = {};
                 templateUpdate[message.id] = message.text.replace('#', '');
                 themeGenerator.generateThemeFromTemplateValues(templateUpdate);
                 promptToReloadWindow();
+                return;
+              case 'reloadUI':
+                vscode.commands.executeCommand('workbench.action.reloadWindow');
                 return;
             }
           }, undefined, context.subscriptions);
@@ -58,4 +62,10 @@ export function activate(context: vscode.ExtensionContext) {
     });
   });
   context.subscriptions.push(disposable);
+//  vscode.window.registerWebviewPanelSerializer('themeyWebView', new ThemeyWebViewSerializer());
 }
+// class ThemeyWebViewSerializer implements vscode.WebviewPanelSerializer {
+//   async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
+//     //webviewPanel.webview.html = themeSummary.getThemeSummary() 
+//   }
+// }
