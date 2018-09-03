@@ -7,30 +7,144 @@ import {
 import Vibrant = require('node-vibrant');
 import * as Mustache from 'mustache';
 import * as ColorHelper from './colorHelper';
+import {
+    Color
+} from 'vscode';
 let cjson = require('strip-json-comments');
 
 export interface Callback < T > {
     (err ? : Error, result ? : T, colorPalette ? : T): void;
 }
 
-// Generate a theme from an in-memory object. This takes the object that contains the base16 color values
-// and inserts them into the default theme template.
-export function generateThemeFromTemplateValues(templateValues) {
-    //    let templateValues = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), 'utf-8'));
-    //    Object.keys(templateUpdate).forEach(function(key) {
-    //         templateValues[key] = templateUpdate[key];
-    //    });
-    let templateFile = cjson(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'default.json'), 'utf-8'));
-    let rendered = Mustache.render(templateFile, templateValues);
-    //    let rendered = Mustache.render(templateFile, templateValues);
-    //    fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), JSON.stringify(templateValues, null, 2));
-    fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'themey-16colors.json'), rendered);
+export interface CustomThemeCallback {
+    (templateValues: any): any;
 }
 
-export function generateBase16Theme(palette: any) {
+// Generate a theme from an in-memory object. This takes the object that contains the base16 color values
+// and inserts them into the default theme template.
+export function generateThemeFromTemplateValues(templateValues: any, fileName?: string) {
+    const themeyFileName = fileName ? fileName : 'themey-16colors.json';
+    let templateFile = cjson(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'default.json'), 'utf-8'));
+    let rendered = Mustache.render(templateFile, templateValues);
+    return rendered;
+    // TODO: Return rendered instead of overwriting?
+    fs.writeFileSync(path.resolve(__dirname, '..', 'themes', themeyFileName), rendered);
+}
+
+export function generateCustomTheme(themeValues: CustomThemeCallback) {
     // Read in the default values for Base0 -> Base7
     let templateValues = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), 'utf-8'));
     // Read in the theme template
+    let templateFile = cjson(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'default.json'), 'utf-8'));
+
+    // if cb
+    // pass them the data
+    if (themeValues) {
+        templateValues = themeValues(templateValues);
+    }
+
+    // Write the new theme with our templateValues
+    let rendered = Mustache.render(templateFile, templateValues);
+
+    // Write the new values
+    //fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), JSON.stringify(templateValues, null, 2));
+    // Save the theme
+    fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'themey-16colors.json'), rendered);
+}
+
+export function generateCustomThemeRandomize(image: string, location: string, cb ? : Callback < string > ) {
+    getColorPaletteFromImage(image, (err, palette) => {
+        generateCustomTheme((templateValues: any) => {
+            Object.keys(templateValues).forEach((key, index) => {
+                if (index < 8) {
+                    let currentValue = ((8 - index) / 8); // 0->1
+                    currentValue = currentValue <= 0.5 ? (0.75 - (currentValue * 1.5)) * -1 : (currentValue * 1.5) - 0.75;
+                    templateValues[key] = ColorHelper.shadeColor(palette.Vibrant, currentValue);
+                }
+            });
+            return templateValues;
+        });
+    });
+}
+
+export function GenerateBasicAndBase16ThemesFromImage(image: string, themesDir: string, cb ? : Callback < string >) {
+    getColorPaletteFromImage(image, (err, colorPaletteOfImage) => {
+        if(err && cb) {
+            cb(err, null);
+        }
+        generateBasicThemes(themesDir, colorPaletteOfImage);
+        let generatedColorPalette = generateBase16Theme(themesDir, colorPaletteOfImage);
+
+        if (cb) {
+            cb(undefined, generatedColorPalette, colorPaletteOfImage);
+        }
+    });
+}
+
+export function getColorPaletteFromImage(imageUrl: string, paletteGeneratorCallback ? : Callback < string > ) {
+    const defaultColor: string = '#d0d0d0';
+    Vibrant.from(imageUrl).getPalette((err, palette) => {
+        if (err && paletteGeneratorCallback) {
+            paletteGeneratorCallback(err, null);
+        }
+
+        let colorPalette = {
+            Vibrant: palette.Vibrant ? palette.Vibrant.getHex() : defaultColor,
+            LightVibrant: palette.LightVibrant ? palette.LightVibrant.getHex() : defaultColor,
+            DarkVibrant: palette.DarkVibrant ? palette.DarkVibrant.getHex() : defaultColor,
+            Muted: palette.Muted ? palette.Muted.getHex() : defaultColor,
+            LightMuted: palette.LightMuted ? palette.LightMuted.getHex() : defaultColor,
+            DarkMuted: palette.DarkMuted ? palette.DarkMuted.getHex() : defaultColor
+        };
+
+        if (paletteGeneratorCallback) {
+            paletteGeneratorCallback(null, colorPalette);
+        }
+    });
+}
+
+function generateBasicThemes(location: string, palette: any) {
+    const defaultColor: string = '#d0d0d0';
+    const defaultThemeName = 'Themey';
+    const defaultThemeFileName = 'themey.json';
+    const altThemeName = 'Themey Alt';
+    const altThemeFileName = 'themey-alt.json';
+
+    let colorSet: IColorSet = {
+        base: {
+            background: '#1e1e1e',
+            foreground: palette.LightMuted,
+            color1: palette.Muted,
+            color2: palette.Vibrant,
+            color3: palette.Vibrant,
+            color4: palette.LightVibrant
+        }
+    };
+    generateTheme(defaultThemeName, colorSet, path.join(location, defaultThemeFileName));
+
+    colorSet.base.background = palette.DarkMuted;
+    colorSet.base.foreground = palette.LightMuted;
+    colorSet.base.color1 = palette.Muted;
+    colorSet.base.color2 = palette.Vibrant;
+    colorSet.base.color3 = palette.Muted;
+    colorSet.base.color4 = palette.Vibrant;
+    generateTheme(altThemeName, colorSet, path.join(location, altThemeFileName));
+}
+
+function generateBase16Theme(location: string, palette: any) {
+    const vsCodeExtensionDir = '';
+    const templateValuesFile = 'templateValues.json';
+    const themeTemplateFile = 'default.json';
+
+    // Strip the # from the hex values
+    Object.keys(palette).forEach((key) => {
+        palette[key] = palette[key].replace('#', '');
+    });
+
+
+    // Read in the default values for Base0 -> Base7
+    let templateValues = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), 'utf-8'));
+    // Read in the theme template (skipping the comments in the file)
     let templateFile = cjson(fs.readFileSync(path.resolve(__dirname, '..', 'themes', 'default.json'), 'utf-8'));
 
     // These are for the VSCode interface. Let's keep a default 
@@ -44,25 +158,25 @@ export function generateBase16Theme(palette: any) {
     // templateValues["base06-hex"] = "basehex";
     // templateValues["base07-hex"] = "basehex";
 
-    let offVibrant = ColorHelper.shadeColor(vibrant, 0.2);
-    let offVibrant1 = ColorHelper.shadeColor(vibrant, 0.3);
-    let offVibrant2 = ColorHelper.shadeColor(vibrant, 0.4);
-    let offVibrant3 = ColorHelper.shadeColor(vibrant, 0.5);
+    let offVibrant = ColorHelper.shadeColor(palette.Vibrant, 0.2);
+    let offVibrant1 = ColorHelper.shadeColor(palette.Vibrant, 0.3);
+    let offVibrant2 = ColorHelper.shadeColor(palette.Vibrant, 0.4);
+    let offVibrant3 = ColorHelper.shadeColor(palette.Vibrant, 0.5);
 
     // Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
-    templateValues["base08-hex"] = palette.vibrant;
+    templateValues["base08-hex"] = palette.Vibrant;
     //  Integers, Boolean, Constants, XML Attributes, Markup Link Url
-    templateValues["base09-hex"] = palette.lightMuted;
+    templateValues["base09-hex"] = palette.LightMuted;
     //  Classes, Markup Bold, Search Text Background
     templateValues["base0A-hex"] = offVibrant3;
     // Strings, Inherited Class, Markup Code, Diff Inserted
-    templateValues["base0B-hex"] = palette.lightVibrant;
+    templateValues["base0B-hex"] = palette.LightVibrant;
     // Support, Regular Expressions, Escape Characters, Markup Quotes
-    templateValues["base0C-hex"] = palette.vibrant;
+    templateValues["base0C-hex"] = palette.Vibrant;
     //  Functions, Methods, Attribute IDs, Headings
-    templateValues["base0D-hex"] = palette.muted;
+    templateValues["base0D-hex"] = palette.Muted;
     //  Keywords, Storage, Selector, Markup Italic, Diff Changed
-    templateValues["base0E-hex"] = palette.vibrant;
+    templateValues["base0E-hex"] = palette.Vibrant;
     // Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
     templateValues["base0F-hex"] = "000000";
 
@@ -70,8 +184,11 @@ export function generateBase16Theme(palette: any) {
     let rendered = Mustache.render(templateFile, templateValues);
 
     // Write the new values
-    fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), JSON.stringify(templateValues, null, 2));
+    //fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'templateValues.json'), JSON.stringify(templateValues, null, 2));
     // Save the theme
+    fs.writeFileSync(path.resolve(__dirname, '..', 'themes', 'themey-16colors.json'), rendered);
+
+    return templateValues;
 }
 
 export function generateThemesFromImage(image: string, location: string, cb ? : Callback < string > ) {
@@ -82,7 +199,6 @@ export function generateThemesFromImage(image: string, location: string, cb ? : 
     let muted: string;
     let lightMuted: string;
     let darkMuted: string;
-
     const defaultColor: string = '#d0d0d0';
 
     Vibrant.from(image).getPalette((err: any, palette: any) => {

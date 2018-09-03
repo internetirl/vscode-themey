@@ -21,6 +21,12 @@ function onClickResetTemplate() {
     });
 }
 
+function postMessageToPanel(message) {
+    vscode.postMessage({
+        command: message
+    });
+}
+
 var count = 0;
 window.addEventListener('message', event => {
     const message = event.data;

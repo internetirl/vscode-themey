@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as themeGenerator from './themeGenerator';
+import { Themey } from './themey';
 
  let templateStrings = {
      "base00-hex": "Default Background",
@@ -51,13 +52,13 @@ export class ThemeyPanel {
 
     public static GenerateThemeFromImage(imageUrl: string, extensionPath: string) {
         const themesDir = path.join(extensionPath, 'themes');
-        themeGenerator.generateThemesFromImage(imageUrl, themesDir, (err: any, message: any, colorPalette: any) => {
+        themeGenerator.GenerateBasicAndBase16ThemesFromImage(imageUrl, themesDir, (err, generatedColorPalette, colorPalette) => {
             if (err) {
                 vscode.window.showInformationMessage("Error getting palette from image. Make sure the path is correct.");
             } else {
                 ThemeyPanel._imageUrl = imageUrl;
                 ThemeyPanel._colorPaletteOfImage = colorPalette;
-                ThemeyPanel._generatedColorPalette = message;
+                ThemeyPanel._generatedColorPalette = generatedColorPalette;
                 ThemeyPanel.createOrShow(extensionPath);
             }
         });
@@ -98,6 +99,9 @@ export class ThemeyPanel {
                         ThemeyPanel._generatedColorPalette[message.id] = message.text;
                         this._updateState();
                     }
+                    return;
+                case 'saveTheme':
+                    Themey.PromptUserToSaveTheme(extensionPath, false);
                     return;
             }
         }, null, this._disposables);
@@ -183,7 +187,7 @@ export class ThemeyPanel {
                  <p style="width:${width}%">${horizontalColorPalette}</p>
                  <button onclick="onClickReloadUI();">Reload UI</button>
                  <button onclick="onClickResetTemplate();">Reset Template</button>
-                 <button onclick="onShowTemplate();">Placeholder</button>
+                 <button onclick="postMessageToPanel('saveTheme');">Save Theme</button>
                  ${verticalColorPalette}
                 </div>
                 <script src="${scriptUri}"></script>
