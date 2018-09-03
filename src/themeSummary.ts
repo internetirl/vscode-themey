@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as vscode from 'vscode';
 
  let templateStrings = {
@@ -19,17 +20,12 @@ import * as vscode from 'vscode';
      "base0F-hex": "Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>"
  };
 
-interface ColorPalette {
-}
-
-function onColorPaletteChange(item) {
-    vscode.postMessage({
-        command: 'alert',
-        text: item.value
-    });
-}
-
  export function getThemeSummary(imageUrl, colorPaletteOfImage, generatedColorPalette) {
+
+    let _extensionPath = __dirname;
+    const scriptPathOnDisk = vscode.Uri.file(path.join(_extensionPath, '..', 'src', 'main.js'));
+    const scriptUri = scriptPathOnDisk.with({scheme: 'vscode-resource' });
+
 
     let width = '60';
     let horizontalColorPalette = ''; 
@@ -43,9 +39,6 @@ function onColorPaletteChange(item) {
 
     verticalColorPalette = `<ul style="width:${width}%;list-style-type:none;text-align:left;"`; 
     Object.keys(generatedColorPalette).forEach(function (color) {
-        if(color === 'scheme-name') {
-            return;
-        }
         let currentColorHexCode = `#${generatedColorPalette[color]}`;
         let liIconStyle = `style="background-color:${currentColorHexCode};display:inline;"`;
         let customIcon = `&emsp;&emsp;&emsp;&emsp;`;
@@ -54,10 +47,6 @@ function onColorPaletteChange(item) {
     });
     verticalColorPalette += '</ul>';
     
-                        //  currentState["imageUrl"] = ${imageUrl};
-                        //  currentState["colorPaletteOfImage"] = ${colorPaletteOfImage};
-                        //  currentState["generatedColorPalette"] = ${generatedColorPalette};
-                        // const vscode = acquireVsCodeApi();
     return `<!DOCTYPE html>
             <html>
                <head></head>
@@ -69,23 +58,7 @@ function onColorPaletteChange(item) {
                  <button onclick="onClickReloadUI();">Reload UI</button>
                  ${verticalColorPalette}
                 </div>
-                <script>
-                    function onColorPaletteChange(item) {
-                        const vscode = acquireVsCodeApi();
-                        vscode.postMessage({
-                            command: 'updateTemplate',
-                            text: item.value,
-                            id: item.id
-                        });
-                        document.getElementById("cringe").innerHTML = "Themey Update";
-                    }
-                    function onClickReloadUI() {
-                        const vscode = acquireVsCodeApi();
-                        vscode.postMessage({
-                            command: 'reloadUI'
-                        });
-                    }
-                </script>
+                <script src="${scriptUri}"></script>
                </body>
             </html>`; 
  }

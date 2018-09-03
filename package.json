@@ -34,7 +34,8 @@
         "custom"
     ],
     "activationEvents": [
-        "onCommand:extension.runThemey"
+        "onCommand:extension.runThemey",
+        "onWebviewPanel:themey"
     ],
     "main": "./out/extension",
     "contributes": {
