@@ -32,18 +32,11 @@ window.addEventListener('message', event => {
     const message = event.data;
     switch(message.command) {
         case 'updateState':
-            document.getElementById('cringe').innerHTML = message.state;
+            // document.getElementById('cringe').innerHTML = message.state;
             let state = JSON.parse(message.state);
             vscode.setState(state);
-            let newState = vscode.getState();
-            document.getElementById('cringe').innerHTML = 'new state: ' + JSON.stringify(newState);
-            break;
-        case 'updatePalette':
-            document.getElementById('cringe').innerHTML = "updatePalette";
-            break;
-        case 'updateTitle':
-            count++;
-            document.getElementById('cringe').innerHTML = "set from panel " + count;
+            // let newState = vscode.getState();
+            // document.getElementById('cringe').innerHTML = 'new state: ' + JSON.stringify(newState);
             break;
     }
 });

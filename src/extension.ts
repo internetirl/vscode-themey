@@ -34,10 +34,6 @@ export function activate(context: vscode.ExtensionContext) {
       ThemeyPanel.GenerateThemeFromImage(imageUrl, context.extensionPath);
     });
   }));
-
-  context.subscriptions.push(vscode.commands.registerCommand('extension.editTheme', () => {
-
-  }));
   
   if(vscode.window.registerWebviewPanelSerializer) {
     vscode.window.registerWebviewPanelSerializer(ThemeyPanel.viewType, {

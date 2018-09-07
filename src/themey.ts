@@ -24,17 +24,17 @@ export class Themey {
     }
 
     public static GenerateThemeFromImage(imageUrl: string, extensionPath: string) {
-        const themesDir = path.join(extensionPath, 'themes');
-        themeGenerator.generateThemesFromImage(imageUrl, themesDir, (err: any, message: any, colorPalette: any) => {
-            if (err) {
-                vscode.window.showInformationMessage("Error getting palette from image. Make sure the path is correct.");
-            } else {
-                ThemeyPanel._imageUrl = imageUrl.trim();
-                ThemeyPanel._colorPaletteOfImage = colorPalette;
-                ThemeyPanel._generatedColorPalette = message;
-                ThemeyPanel.createOrShow(extensionPath);
-            }
-        });
+        // const themesDir = path.join(extensionPath, 'themes');
+        // themeGenerator.generateThemesFromImage(imageUrl, themesDir, (err: any, message: any, colorPalette: any) => {
+        //     if (err) {
+        //         vscode.window.showInformationMessage("Error getting palette from image. Make sure the path is correct.");
+        //     } else {
+        //         ThemeyPanel._imageUrl = imageUrl.trim();
+        //         ThemeyPanel._colorPaletteOfImage = colorPalette;
+        //         ThemeyPanel._generatedColorPalette = message;
+        //         ThemeyPanel.createOrShow(extensionPath);
+        //     }
+        // });
     }
 
     public static GenerateThemeFromBase16Palette(palette: string) {

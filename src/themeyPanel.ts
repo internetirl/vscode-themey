@@ -90,7 +90,15 @@ export class ThemeyPanel {
                     // this._update();
                     return;
                 case 'reloadUI':
-                    themeGenerator.generateThemeFromTemplateValues(ThemeyPanel._generatedColorPalette);
+                    const rendered = themeGenerator.generateThemeFromTemplateValues(ThemeyPanel._generatedColorPalette);
+                    themeGenerator.saveThemeFile('themey-16colors.json', rendered);
+                    //this._updateState();
+                    // TODO: write theme to file
+                    vscode.commands.executeCommand('workbench.action.reloadWindow');
+                    return;
+                case 'randomize':
+                    ThemeyPanel._generatedColorPalette = themeGenerator.generateRandomThemeBase16(ThemeyPanel._colorPaletteOfImage);
+                    this._update();
                     vscode.commands.executeCommand('workbench.action.reloadWindow');
                     return;
                 case 'updateTemplate':
@@ -158,13 +166,14 @@ export class ThemeyPanel {
         });
 
         let width = '80';
+        let imageHeight = '500px';
         let horizontalColorPalette = '';
         let verticalColorPalette = '';
         let characterToApplyColorPaletteColorTo = String.fromCharCode(160);
         let generatedColorPaletteKeys = Object.keys(generatedColorPalette);
 
         Object.keys(colorPaletteOfImage).forEach(function (color) {
-            horizontalColorPalette += `<span style="background-color:${colorPaletteOfImage[color]};width:16.667%;height:24px;display:inline-block;">${String.fromCharCode(160)}</span>`;
+            horizontalColorPalette += `<span style="background-color:#${colorPaletteOfImage[color]};width:16.667%;height:24px;display:inline-block;">${String.fromCharCode(160)}</span>`;
         });
 
         verticalColorPalette = `<ul style="width:${width}%;list-style-type:none;text-align:left;"`;
@@ -177,17 +186,22 @@ export class ThemeyPanel {
         });
         verticalColorPalette += '</ul>';
 
+                //  <img style="width:${width}%;height:${imageHeight}" src="${imageUrl}"/>
+                //  <p style="width:${width}%">${horizontalColorPalette}</p>
         return `<!DOCTYPE html>
             <html>
                <head></head>
                <body>
                 <h1 id="cringe" align="center">Themey</h1>
                 <div align="center">
-                 <img style="width:${width}%" src="${imageUrl}"/>
+                <div align="center" style="display:inline-block;">
+                 <img style="height:${imageHeight}" src="${imageUrl}"/>
                  <p style="width:${width}%">${horizontalColorPalette}</p>
                  <button onclick="onClickReloadUI();">Reload UI</button>
                  <button onclick="onClickResetTemplate();">Reset Template</button>
+                 <button onclick="postMessageToPanel('randomize');">Randomize</button>
                  <button onclick="postMessageToPanel('saveTheme');">Save Theme</button>
+                </div>
                  ${verticalColorPalette}
                 </div>
                 <script src="${scriptUri}"></script>
