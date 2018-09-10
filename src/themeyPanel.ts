@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as themeGenerator from './themeGenerator';
-import { Themey } from './themey';
+import { Themey } from './themeyHelpers';
 
  let templateStrings = {
      "base00-hex": "Default Background",
@@ -85,15 +85,11 @@ export class ThemeyPanel {
         this._panel.webview.onDidReceiveMessage(message => {
             switch (message.command) {
                 case 'resetTemplate':
-                    // vscode.window.showErrorMessage(JSON.stringify(ThemeyPanel._generatedColorPalette));
                     vscode.window.showErrorMessage('resetTemplate');
-                    // this._update();
                     return;
                 case 'reloadUI':
                     const rendered = themeGenerator.generateThemeFromTemplateValues(ThemeyPanel._generatedColorPalette);
                     themeGenerator.saveThemeFile('themey-16colors.json', rendered);
-                    //this._updateState();
-                    // TODO: write theme to file
                     vscode.commands.executeCommand('workbench.action.reloadWindow');
                     return;
                 case 'randomize':
@@ -102,7 +98,6 @@ export class ThemeyPanel {
                     vscode.commands.executeCommand('workbench.action.reloadWindow');
                     return;
                 case 'updateTemplate':
-                    this.setTitleBar('boo');
                     if(ThemeyPanel._generatedColorPalette) {
                         ThemeyPanel._generatedColorPalette[message.id] = message.text;
                         this._updateState();
@@ -113,12 +108,6 @@ export class ThemeyPanel {
                     return;
             }
         }, null, this._disposables);
-    }
-
-    public setTitleBar(titleText: string) {
-        this._panel.webview.postMessage({
-            command: 'updateTitle'
-        });
     }
 
     public dispose() {
@@ -159,7 +148,6 @@ export class ThemeyPanel {
     }
 
     private _getHtmlForWebview(imageUrl, colorPaletteOfImage, generatedColorPalette) {
-
         const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'src', 'main.js'));
         const scriptUri = scriptPathOnDisk.with({
             scheme: 'vscode-resource'
